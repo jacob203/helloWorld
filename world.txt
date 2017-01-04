@@ -5,3 +5,5 @@ master commit 1
 master commit 2
 master commit 3
 feature0 commit 1
+feature0 commit 2
+feature0 commit 3
