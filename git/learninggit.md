@@ -63,6 +63,20 @@ git reset --hard
 drop all changes in stage and working directory.
 
 
+# rebase
+rebase is used to merge commits by applying the branch commits to the other branch, generally rebase feature branch to master.  
+for example, you have a feature branch, it is finished, you want to merge your feature branch to master, and there are other developers working on the master, there migth be some conficts, so you want to fix the conficts.  
+rebasing feature to master is to apply all feature commits to the latest master in your repo.  
+
+
+how rebase works?
+if you rebase feature to master, firstly it find the crossing point which you create feature branch at, then create a shaddow branch feature at the current master you have, apply all old feature branch's commits to the shaddow one, there might be some conficts, fix them. when rebase is done, your old feature branch will be removed, the shaddow one will be the feature branch.  
+what if you don't rebase on the same branch?  
+for example "git rebase -i HEAD~2", there are no crossing points, then it use HEAD~2 as the crossing point, and use HEAD~2 as the base, apply HEAD~1 and HEAD to the base, if you don't do any squash, fixup or drop and so on, it does nothing. so rebase it on the same branch is used to clean up your feature branch.
+
+
+
+
 
 
 #### local and remote
