@@ -46,7 +46,9 @@ public:
             return index;
         }
 };
+
 =======================================================================
+compression find
 class ConnectingGraph {
 public:
     ConnectingGraph(int n) {
@@ -69,8 +71,6 @@ public:
         auto bParent = findParent(b);
         if (aParent != bParent) {
             elements[aParent] = bParent;
-            updateParent(a, bParent);
-            updateParent(b, bParent);
         }
     }
 
@@ -91,65 +91,12 @@ public:
         }
 
         int findParent(int index) {
+            auto curIndex = index;
             while(elements[index] != index){
                 index = elements[index];
             }
-            return index;
-        }
 
-        int updateParent(int index, int parent){
-            while(elements[index] != parent){
-                index = elements[index];
-                elements[index] = parent;
-            }
-            return index;
-        }
-};
-=======================================================================
-class ConnectingGraph {
-public:
-    ConnectingGraph(int n) {
-        if (n <= 0) {
-            return;//error
-        }
-
-        elements.resize(n+1);
-        for(int i = 0; i < elements.size(); i++){
-            elements[i] = i;
-        }
-    }
-
-    void connect(int a, int b) {
-        if( !isValidLabel(a) || !isValidLabel(b)) {
-            return;
-        }
-        auto aLabel = root(a);
-        auto bLabel = root(b);
-        elements[aLabel] = bLabel;
-    }
-
-    bool query(int a, int b) {
-        if (!isValidLabel(a) || !isValidLabel(b)){
-            return false;
-        }
-
-        return root(a) == root(b);
-    }
-    private:
-        vector<int> elements;
-        bool isValidLabel(int label){
-            if( label <= 0 || label > elements.size()) {
-                return false;
-            }
-            return true;
-        }
-
-        int root(int index){
-            while(elements[index] != index)
-            {
-                elements[index] = elements[elements[index]];
-                index = elements[index];
-            }
+            elements[curIndex] = index;
             return index;
         }
 };
