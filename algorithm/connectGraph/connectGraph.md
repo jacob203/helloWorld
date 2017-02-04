@@ -31,3 +31,25 @@ so the final time complexity is kn, k is the max of k1 and k2.
 there is a method to optimize the complexity, which is compression path. during the union find, update the node's group node
 to the root node. 
 the union find's time complexity can be optimized to lgn on average, so the time complexity is klgn, but its worst time complexity is also kn.
+
+# connectGraph2
+Given n nodes in a graph labeled from 1 to n. There is no edges in the graph at beginning.
+
+You need to support the following method:
+1. connect(a, b), an edge to connect node a and node b
+2. query(a), Returns the number of connected component nodes which include node a.  
+
+example:
+```
+5 // n = 5
+query(1) return 1
+connect(1, 2)
+query(1) return 2
+connect(2, 4)
+query(1) return 3
+connect(1, 4)
+query(1) return 3
+```
+it is also an union-find problem, but the query returns the group count, so just do a little modification to the previous algorithm.
+1. normal method: add another element to the node value to count the subset nodes
+2. compression method: during find, update the node's parent node to the group node
