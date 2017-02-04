@@ -1,13 +1,18 @@
-package connectGraph
+package connectGraph2
 
+type graphValue struct {
+	parentId int
+	subsetCount int
+}
 type graph struct{
-	data []int
+	data []graphValue
 }
 
 func NewGraph(nodeCount int) *graph  {
-	g := &graph{data:make([]int, nodeCount, nodeCount)}
+	g := &graph{data:make([]graphValue, nodeCount, nodeCount)}
 	for i, _ := range g.data {
-		g.data[i] = i
+		g.data[i].parentId = i
+		g.data[i].subsetCount = 1
 	}
 	return g
 }
@@ -23,7 +28,8 @@ func (g *graph) Connect(a int, b int) {
 	aLabel := g.find(a)
 	bLabel := g.find(b)
 	if aLabel != bLabel {
-		g.data[aLabel] = bLabel
+		g.data[aLabel].parentId = bLabel
+		g.data[bLabel].subsetCount += g.data[aLabel].subsetCount
 	}
 }
 
@@ -37,11 +43,10 @@ func (g *graph) Query(a int, b int) bool {
 
 func (g *graph) find(a int) int {
 	curId := a
-	for a != g.data[a] {
-		a = g.data[a]
+	for a != g.data[a].parentId {
+		a = g.data[a].parentId
 	}
 
-	g.data[curId] = a
+	g.data[curId].parentId = a
 	return a
 }
-
