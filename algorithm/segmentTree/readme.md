@@ -20,4 +20,5 @@ segment tree is used to fix this type of issues. it calculates the range sum, wh
       /     \           /     \
    [0, 0]  [1, 1]     [2, 2]  [3, 3]
 ```
-the time complexity of updating ranges when a data is changed is lgn, the time complexity of building segment tree is n。
+the time complexity of updating ranges when a data is changed is lgn, the time complexity of building segment tree is n。  
+the segment tree is used to calculate the range result when the array can be changed.
