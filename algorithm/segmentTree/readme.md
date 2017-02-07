@@ -22,3 +22,23 @@ segment tree is used to fix this type of issues. it calculates the range sum, wh
 ```
 the time complexity of updating ranges when a data is changed is lgn, the time complexity of building segment tree is n。  
 the segment tree is used to calculate the range result when the array can be changed.
+
+# usage
+### find the range max number
+For array [1, 4, 2, 3], the corresponding Segment Tree is:
+```
+
+                  [0, 3, max=4]
+                 /             \
+          [0,1,max=4]        [2,3,max=3]
+          /         \        /         \
+   [0,0,max=1] [1,1,max=4] [2,2,max=2], [3,3,max=3]
+query(root, 1, 1), return 4
+
+query(root, 1, 2), return 4
+
+query(root, 2, 3), return 3
+
+query(root, 0, 2), return 4
+```
+the time complexity is lgn
