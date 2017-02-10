@@ -67,3 +67,6 @@ or call modify(root, 4, 0), we can get:
        /              \             /             \
 [1, 1, max=2], [2, 2, max=1], [3, 3, max=0], [4, 4, max=0]
 ```
+### calc the interval sum
+if there are no changes in the array, using the method presum to calc the interval sum is the fastest way.
+but if the array datas can be changed, can't use the method preSum, segment tree is the better method
