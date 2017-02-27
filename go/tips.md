@@ -214,7 +214,92 @@ as get puts all parameters in the url, there is a limitation for an url length, 
 and it is not safe to use get to send requests as we can see the requests.
 * keep-alive
 http enables keep-alive by default, it means that it doesn't close a http request after it gets its response, it will use that when sending another request to the same server.
+# how to extend existing type in another package
+You can define your own alias or sub-package as follows:
+```
+type MyRouter mux.Router
 
+func (m *MyRouter) F() { ... }
+```
+or by embedding the original router
+```
+type MyRouter struct {
+    *mux.Router
+}
+
+func (m *MyRouter) F() { ... }
+
+...
+r := &MyRouter{router}
+r.F()
+```
+
+# const
+there are two const variables, one is typed, the other is untyped.
+```
+const untyped = "hello world" untyped
+const typed string = "hello world" typed
+```
+the first line is untyped, and the second is typed.
+typed const variable can only be assigned to the const variables while untyped const variable can be assigned to any variables which accept the variable.
+```
+type MyString string
+var myStr MyString = typed // error
+var myStr MyString = untyped //ok, it is equal to var myStr MyString = "hello world"
+```
+for all const variables, they all have their default type, if there is no implicit type, it goes to its default type.
+for example:
+* string is string by default
+* 0 is int
+* 0.0 is float
+and so on
+
+# for i and range
+```
+for i := 0; i < len(str); i++{
+//iterator the str by byte
+}
+for i,v : range str{
+//iterator the str by char, for unicode, one char has two bytes
+}
+```
+
+# json.RawMessage
+when marshal json.RawMessage, it can't be empty, it has to be a json, if it is empty, it has to be "{}"
+```
+	bytes, err := json.Marshal(&struct {
+		Hello string
+		Body  json.RawMessage
+	}{
+		Hello: "hello world",
+		Body:  nil/make([]byte,0),
+	})
+```
+when body is nil or empty,the function Marshal will return err which is "json: error calling MarshalJSON for type json.RawMessage: unexpected end of JSON input"
+```
+	bytes, err := json.Marshal(&struct {
+		Hello string
+		Body  json.RawMessage
+	}{
+		Hello: "hello world",
+		Body:  json.RawMessage{'{','}'},
+	})
+```
+the output is
+```
+bytes: {
+	"Hello": "hello world",
+	"Body": {}
+}
+```
+if you want to marshal your properties, you must set your property public
+
+# whether using pointers or not in request struct besiding the memory issue
+it depends on if the value 0 is a legal value for the field variable, if it is, use a pointer, if it isn't, using value type variable is ok.
+for required fields, use value variables.
+if omitempty is in the field tag, it means that when marshaling, if it is a value, its value is 0, then the field is not marshalled.
+if it is a pointer, its value is nil, the field is not marshalled, but it has a value which is 0, it can be marshalled.
+if there is no omitempty, for a value type, if it is 0, it is marshalled into 0. for a pointer type, if it is nil, it is marshalled into null.
 
 
 
