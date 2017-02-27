@@ -70,3 +70,14 @@ or call modify(root, 4, 0), we can get:
 ### calc the interval sum
 if there are no changes in the array, using the method presum to calc the interval sum is the fastest way.
 but if the array datas can be changed, can't use the method preSum, segment tree is the better method
+### Count of Smaller Number before itself
+Give you an integer array (index from 0 to n-1, where n is the size of this array, data value from 0 to 10000) . For each element Ai in the array, count the number of element before this element Ai is smaller than it and return count number array.
+```
+For array [1,2,7,8,5], return [0,1,2,3,2]
+[1,2,3,2,4,1] return [0, 1, 2, 1, 4, 0]
+watch out duplicated nums
+```
+the question says the array data are in the range 0~10000, when it appears, it means that you can use an array whose size is 10000 to mark if the data exists or not.
+and it wants the value counts smaller than the value, in another words, it want the value count in the range between 0 and value except value itself.
+when it comes to range result, you't better think of segment tree to fix it.
+so build the segment tree in 0~10000, whose count is the count of values between low and high, when querying a num, it means finding the 0~num counts, so it is translated into a segment question.
