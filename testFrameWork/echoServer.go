@@ -30,7 +30,7 @@ func echoHandler(w http.ResponseWriter, r *http.Request) {
 			ErrMsg: fmt.Sprint(err),
 			respStruct: respStruct{
 				Method: r.Method,
-				RawURL: r.URL.String(),
+				RawURL: r.RequestURI,
 				Header: &r.Header,
 				Body:   (*json.RawMessage)(&body),
 			},
@@ -44,7 +44,7 @@ func echoHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	okResp, err := json.MarshalIndent(&respStruct{
 		Method: r.Method,
-		RawURL: r.URL.String(),
+		RawURL: r.RequestURI,
 		Header: &r.Header,
 		Body:   (*json.RawMessage)(&body),
 	}, "", "\t")
