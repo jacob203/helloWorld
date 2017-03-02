@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +13,7 @@ type respStruct struct {
 	Method string
 	RawURL string
 	Header *http.Header
-	Body   *json.RawMessage
+	Body   string
 }
 
 type errStuct struct {
@@ -20,36 +21,40 @@ type errStuct struct {
 	respStruct
 }
 
+func Marshal(v interface{}) ([]byte, error) {
+	var bodyBytes bytes.Buffer
+	pEncoder := json.NewEncoder(&bodyBytes)
+	pEncoder.SetEscapeHTML(false)
+	pEncoder.SetIndent("", "\t")
+	err := pEncoder.Encode(v)
+	return bodyBytes.Bytes(), err
+}
+
 func echoHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
-	if len(body) == 0 {
-		body = []byte{'{', '}'}
-	}
 	if err != nil {
-		errMsg, _ := json.MarshalIndent(&errStuct{
+		errMsg, _ := Marshal(&errStuct{
 			ErrMsg: fmt.Sprint(err),
 			respStruct: respStruct{
 				Method: r.Method,
-				RawURL: r.RequestURI,
+				RawURL: r.URL.RequestURI(),
 				Header: &r.Header,
-				Body:   (*json.RawMessage)(&body),
-			},
-		}, "", "\t")
-
+				Body:   string(body),
+			}})
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, string(errMsg))
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	okResp, err := json.MarshalIndent(&respStruct{
+	okResp, err := Marshal(&respStruct{
 		Method: r.Method,
-		RawURL: r.RequestURI,
+		RawURL: r.URL.RequestURI(),
 		Header: &r.Header,
-		Body:   (*json.RawMessage)(&body),
-	}, "", "\t")
+		Body:   string(body),
+	})
 	if err != nil {
-		fmt.Println("err is ", err)
+		panic(err)
 		return
 	}
 	io.WriteString(w, string(okResp))

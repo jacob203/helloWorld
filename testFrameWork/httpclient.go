@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	client *http.Client
+	client               *http.Client
+	ignoredHeaderKeyList = []string{"Accept-Encoding", "User-Agent"}
 )
 
 func init() {
@@ -123,15 +124,12 @@ func CompareRequest(method, path string, args *Args) bool {
 	if err != nil {
 		panic(err)
 	}
-	if len(reqBody) == 0 {
-		reqBody = []byte{'{', '}'}
-	}
-	reqBytes, err := json.MarshalIndent(&respStruct{
+	reqBytes, err := Marshal(&respStruct{
 		Method: req.Method,
-		RawURL: req.RequestURI,
+		RawURL: req.URL.RequestURI(),
 		Header: &req.Header,
-		Body:   (*json.RawMessage)(&reqBody),
-	}, "", "\t")
+		Body:   string(reqBody),
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -143,19 +141,19 @@ func CompareRequest(method, path string, args *Args) bool {
 		panic(err)
 	}
 
-	var respBytes []byte
+	var respBodyBytes []byte
 	if resp.StatusCode != http.StatusOK {
-		respBytes, err = ioutil.ReadAll(resp.Body)
+		respBodyBytes, err = ioutil.ReadAll(resp.Body)
 		if err != nil {
 			panic(err)
 		}
-		printBytes, err := json.MarshalIndent(&struct {
+		printBytes, err := Marshal(&struct {
 			Status          string
 			respStructBytes *json.RawMessage
 		}{
 			Status:          resp.Status,
-			respStructBytes: (*json.RawMessage)(&respBytes),
-		}, "", "\t")
+			respStructBytes: (*json.RawMessage)(&respBodyBytes),
+		})
 		if err != nil {
 			panic(err)
 		}
@@ -163,12 +161,26 @@ func CompareRequest(method, path string, args *Args) bool {
 		return false
 	}
 
-	respBytes, err = ioutil.ReadAll(resp.Body)
+	respBodyBytes, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	respBody := &respStruct{}
+	err = json.Unmarshal(respBodyBytes, respBody)
+	if err != nil {
+		panic(err)
+	}
+	if respBody.Header != nil {
+		for _, deletingKey := range ignoredHeaderKeyList {
+			respBody.Header.Del(deletingKey)
+		}
+	}
+	newRespBodyBytes, err := Marshal(respBody)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("resp:", (string)(respBytes))
+	fmt.Println("resp:", (string)(newRespBodyBytes))
 
-	return (string)(reqBytes) == (string)(respBytes)
+	return (string)(reqBytes) == (string)(newRespBodyBytes)
 }
