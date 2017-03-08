@@ -36,5 +36,18 @@ init:F[i][i] = (A[i],0)
 if not using memory search,
 for this kind of init, generally it expands from the mid, begin from [i][i], expand to the right.
 
+another algorithm is :
+F[i][j] = min{F[i][k] + F[k+1][j] + sum[i:j]}
+actually it is how we find a good cut point.
+
+
+stone game II
+it can merge the piles by circular, it means it can merge the end pile and the begin pile.
+generally this kind of issue can be divided into two types:
+* double the original array, so the array becomes [original, original], then calc the F[0][newArraySize-1], all F[i][j] are calculated.
+then the result is min{F[i][i+originalSize-1] 0<=i<originalSize}
+* check if the issue can be divided into [begin, middle, end], middle means F[end, [0][n-2]], F[begin][end], but it isn't.
+
+
 
 
