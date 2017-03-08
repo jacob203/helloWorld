@@ -94,3 +94,15 @@ func (u *MyUser) UnmarshalJSON(data []byte) error {
 	return nil
 }
 ```
+##### Json Marshal
+* []byte: marshalled by bytes
+* string: used directly
+* jsonrawmessage must be a json Object
+in json, it can be Json int, Json String, Json Struct, Json float, Json Array, Json Map, Json bool, Json slice
+Json int and Json float is a number: it is encoded like {"number":10}
+Json string is a string: it is encoded like {"name":"hello"}
+Json Array and Json slice starts [], but Json []byte is encoded into base64
+Json struct and Json map it starts like {}
+so json raw message value must contain a json value, it means its format must like one of json object.
+actually all customized object must be one of json objects
+
